@@ -1,4 +1,4 @@
 #!/bin/bash
 
-nasm -f elf32 main.asm -o main.o
-ld -m elf_i386 main.o -o main
+nasm -f elf32 main.asm -o a.o
+ld -m elf_i386 a.o -o a
