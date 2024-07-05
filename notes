@@ -1,0 +1,2 @@
+Register - memory, different purposes, fixed width
+the stack - stack of memory, there is a pointer that holds the location of the top of the stack, when add a new value the pointer is moved
