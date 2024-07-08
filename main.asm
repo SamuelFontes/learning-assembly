@@ -33,7 +33,8 @@ _start:
 	mov ebx, 12	; exit code
 	mov eax, 1	; set to exit system call
 	;jmp _subtraction
-	jmp _ex5
+	;jmp _ex5
+	jmp _allocate_msg_on_stack
 	int 0x80
 
 _exit:
@@ -70,6 +71,24 @@ _ex5:
 	mov edx, 6	; set string size
 	int 0x80	; execute the system call
 	
+	jmp _break_line
+
+
+
+_allocate_msg_on_stack:
+; allocate memory
+	sub esp, 4		; move stack pointer 4 bytes, allocate memory on the stack
+; write message to memory 
+	mov [esp], byte 'H'
+	mov [esp+1], byte 'e'
+	mov [esp+2], byte 'y'
+	mov [esp+3], byte '!'
+; write message from memory to stdout
+	mov eax, 4	; sys_write system call
+	mov ebx, 1	; stdout file descriptor
+	mov ecx, esp	; pointer to bytes to write
+	mov edx, 4	; size in bytes for the message we weill write
+	int 0x80	; peform system call
 	jmp _break_line
 
 
