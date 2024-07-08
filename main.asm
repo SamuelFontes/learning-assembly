@@ -1,13 +1,14 @@
 ; EX1
-;global _start 
-_start1: 
+global _start 
+_subtraction: 
 	mov eax, 1  	; exit system call
-	mov ebx, 42 	; exit code
+	cmp ebx, 42	; if(ebx == 42)
+	jl _loop
 	sub ebx, 2	; subtract 2 from exit code ebx
 	int 0x80 
 
+;je A, B ;jump if equal
 ; EX2
-global _start
 
 section .data
 	msg db "Hello, World!", 0x0a
@@ -29,7 +30,44 @@ _start2:
 ; EIP instruction pointer, holds location of machine code the cpu is executing, we can jump around the code by changing this pointer
 
 _start:
-	mov ebx, 42	; exit code
+	mov ebx, 12	; exit code
 	mov eax, 1	; set to exit system call
-	jmp _start1
+	;jmp _subtraction
+	jmp _ex5
 	int 0x80
+
+_exit:
+	mov ebx, 0	; exit code 0
+	mov eax, 1	; sys_exit
+	int 0x80	; exit
+
+; 
+_loop:
+	inc ebx
+	jmp _subtraction
+
+
+
+;ex5
+section .data
+	addr db "yellow"
+	break_line db 0x0a
+
+_break_line:
+	mov eax, 4	; sys_write
+	mov ebx, 1	; stdout
+	mov edx, 1	; size
+	mov ecx, break_line	; break line simbol
+	int 0x80	; execute instruction
+	jmp _exit
+
+_ex5:
+	mov eax, 4	; sys_write system call
+	mov ebx, 1	; stdout file descriptor
+	mov ecx, addr 	; set string location
+	mov edx, 6	; set string size
+	int 0x80	; execute the system call
+	
+	jmp _break_line
+
+
