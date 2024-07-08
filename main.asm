@@ -61,8 +61,9 @@ _break_line:
 	mov ecx, break_line	; break line simbol
 	int 0x80	; execute instruction
 
-	pop eax		; retrieve call stack pointer from stack
-	jmp eax		; go back to where this function was called
+	;pop eax	; retrieve call stack pointer from stack
+	;jmp eax	; go back to where this function was called
+	ret		; this does the same as the two lines above
 
 _ex5:
 	mov [addr], byte 'H'
@@ -93,4 +94,19 @@ _allocate_msg_on_stack:
 	mov edx, 4	; size in bytes for the message we weill write
 	int 0x80	; peform system call
 	call _break_line
+	call _function_with_stack_allocation
 	jmp _exit
+
+_function_with_stack_allocation:
+	mov ebp, esp		; copy the stack pointer location to use to go back to code later
+	sub esp, 2		; allocate 2 bytes on the stack
+	mov [esp], byte 'H'	
+	mov [esp+1], byte 'i'
+	mov eax, 4		; sys_write system call
+	mov ebx,1		; stdout file descriptor
+	mov ecx, esp		; stack pointer to the message
+	mov edx, 2		; message size
+	int 0x80		; perform system call
+	call _break_line	; this is probably a bad idea, if the ebp is replaced we are fucked
+	mov esp, ebp
+	ret
