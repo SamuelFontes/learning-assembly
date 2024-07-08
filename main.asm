@@ -60,7 +60,9 @@ _break_line:
 	mov edx, 1	; size
 	mov ecx, break_line	; break line simbol
 	int 0x80	; execute instruction
-	jmp _exit
+
+	pop eax		; retrieve call stack pointer from stack
+	jmp eax		; go back to where this function was called
 
 _ex5:
 	mov [addr], byte 'H'
@@ -71,7 +73,8 @@ _ex5:
 	mov edx, 6	; set string size
 	int 0x80	; execute the system call
 	
-	jmp _break_line
+	call _break_line
+	jmp _exit
 
 
 
@@ -89,6 +92,5 @@ _allocate_msg_on_stack:
 	mov ecx, esp	; pointer to bytes to write
 	mov edx, 4	; size in bytes for the message we weill write
 	int 0x80	; peform system call
-	jmp _break_line
-
-
+	call _break_line
+	jmp _exit
