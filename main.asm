@@ -55,6 +55,7 @@ section .data
 	break_line db 0x0a
 
 _break_line:
+	push ebp
 	mov eax, 4	; sys_write
 	mov ebx, 1	; stdout
 	mov edx, 1	; size
@@ -63,6 +64,7 @@ _break_line:
 
 	;pop eax	; retrieve call stack pointer from stack
 	;jmp eax	; go back to where this function was called
+	pop ebp
 	ret		; this does the same as the two lines above
 
 _ex5:
@@ -98,6 +100,7 @@ _allocate_msg_on_stack:
 	jmp _exit
 
 _function_with_stack_allocation:
+	push ebp		; save the pointer from last function into the stack
 	mov ebp, esp		; copy the stack pointer location to use to go back to code later
 	sub esp, 2		; allocate 2 bytes on the stack
 	mov [esp], byte 'H'	
@@ -109,4 +112,5 @@ _function_with_stack_allocation:
 	int 0x80		; perform system call
 	call _break_line	; this is probably a bad idea, if the ebp is replaced we are fucked
 	mov esp, ebp
+	pop ebp			; get pointer back from last function from the stack
 	ret
