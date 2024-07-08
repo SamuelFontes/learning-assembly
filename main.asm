@@ -62,6 +62,8 @@ _break_line:
 	jmp _exit
 
 _ex5:
+	mov [addr], byte 'H'
+	mov [addr+5], byte '!'
 	mov eax, 4	; sys_write system call
 	mov ebx, 1	; stdout file descriptor
 	mov ecx, addr 	; set string location
