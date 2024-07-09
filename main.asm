@@ -1,39 +1,22 @@
-; EX1
-global _start 
-_subtraction: 
-	mov eax, 1  	; exit system call
-	cmp ebx, 42	; if(ebx == 42)
-	jl _loop
-	sub ebx, 2	; subtract 2 from exit code ebx
-	int 0x80 
-
-;je A, B ;jump if equal
-; EX2
-
 section .data
 	msg db "Hello, World!", 0x0a
 	len equ $ - msg
+	addr db "yellow"
+	break_line db 0x0a
 
 section .text
-_start2:
-	mov eax, 4	; sys_write system call
-	mov ebx, 1	; stdout file descriptor
-	mov ecx, msg	; message content
-	mov edx, len	; message size
-	int 0x80	; perform system call, execute code
+global main 
 
-	mov eax, 1	; system call to exit the program
-	mov ebx, 0	; set the exit code
-	int 0x80	; run exit system call
 
-; EX3
-; EIP instruction pointer, holds location of machine code the cpu is executing, we can jump around the code by changing this pointer
 
-_start:
+main:
+    mov ebp, esp; for correct debugging
 	mov ebx, 12	; exit code
 	mov eax, 1	; set to exit system call
 	;jmp _subtraction
 	;jmp _ex5
+	push 21
+	call _function_with_param
 	jmp _allocate_msg_on_stack
 	int 0x80
 
@@ -42,17 +25,6 @@ _exit:
 	mov eax, 1	; sys_exit
 	int 0x80	; exit
 
-; 
-_loop:
-	inc ebx
-	jmp _subtraction
-
-
-
-;ex5
-section .data
-	addr db "yellow"
-	break_line db 0x0a
 
 _break_line:
 	push ebp
@@ -62,7 +34,7 @@ _break_line:
 	mov ecx, break_line	; break line simbol
 	int 0x80	; execute instruction
 
-	;pop eax	; retrieve call stack pointer from stack
+	;pop eax	; retrieve call stack pointer from stack, and set the eax value to the pointer
 	;jmp eax	; go back to where this function was called
 	pop ebp
 	ret		; this does the same as the two lines above
@@ -114,3 +86,30 @@ _function_with_stack_allocation:
 	mov esp, ebp
 	pop ebp			; get pointer back from last function from the stack
 	ret
+
+_function_with_param:
+	push ebp
+	mov ebp, esp
+	mov eax, [ebp+8]	; this will get the parameter that was pushed outside this function
+	add eax, eax		; double the value
+    	sub esp,1
+	mov [esp], eax
+	mov eax,4
+	mov ebx,1
+	mov ecx, esp
+	mov edx, 1
+	int 0x80
+	mov esp, ebp
+	pop ebp
+	ret
+
+_test:
+	mov eax, 4	; sys_write system call
+	mov ebx, 1	; stdout file descriptor
+	mov ecx, msg	; message content
+	mov edx, len	; message size
+	int 0x80	; perform system call, execute code
+
+	mov eax, 1	; system call to exit the program
+	mov ebx, 0	; set the exit code
+	int 0x80	; run exit system call
