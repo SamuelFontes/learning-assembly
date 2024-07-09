@@ -1,13 +1,14 @@
+global main 
+extern printf
+
 section .data
 	msg db "Hello, World!", 0x0a
 	len equ $ - msg
 	addr db "yellow"
 	break_line db 0x0a
+	print_msg db "Testing %i...", 0x0a, 0x00
 
 section .text
-global main 
-
-
 
 main:
     mov ebp, esp; for correct debugging
@@ -19,6 +20,7 @@ main:
 	call _function_with_param
 	jmp _allocate_msg_on_stack
 	int 0x80
+	call _print_with_printf
 
 _exit:
 	mov ebx, 0	; exit code 0
@@ -113,3 +115,15 @@ _test:
 	mov eax, 1	; system call to exit the program
 	mov ebx, 0	; set the exit code
 	int 0x80	; run exit system call
+
+_print_with_printf:
+	push ebp
+	mov ebp, esp
+	push 123
+	push print_msg	
+	call printf
+	mov eax, 0
+	mov esp, ebp
+	pop ebp
+	ret
+
