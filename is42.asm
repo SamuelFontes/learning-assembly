@@ -1,4 +1,5 @@
 global is42
+global return4
 is42:
 	push ebp; save base pointer to stack
 	mov ebp, esp; copy our current code location to base pointer
@@ -11,5 +12,12 @@ is42:
 
 _true:
 	mov eax, 1
+	pop ebp
+	ret
+
+return4:
+	push ebp
+	mov ebp, esp
+	mov eax, 4
 	pop ebp
 	ret

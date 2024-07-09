@@ -12,4 +12,5 @@ int main(){
 	else{
 		printf("It's not 42\n");
 	}
+	printf("%i\n",return4());
 }
